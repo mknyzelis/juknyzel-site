@@ -1,0 +1,740 @@
+/* ===== Fonts (free stand-ins for Neue Haas Unica Pro / Adobe Jenson Pro) =====
+   Self-hosted (no third-party requests): Inter 300 and EB Garamond 400, Latin +
+   Latin-Extended (which covers the Lithuanian letters). Both are SIL OFL fonts.
+   When the real fonts arrive: replace the files in assets/fonts/, edit the
+   @font-face blocks below, and keep the --font-sans / --font-serif variables. */
+
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/eb-garamond-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/eb-garamond-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../assets/fonts/inter-300-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../assets/fonts/inter-300-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'EB Garamond', 'Times New Roman', serif;
+
+  --color-bg: #f7f7ef;
+  --color-text: #000000;
+
+  /* Type sizes. The layout scales fluidly with the window (1rem = 16px at the
+     1920px design width), so on smaller screens the text would shrink with it;
+     the floors keep it legible. Above ~1500px wide the rem value always wins,
+     so the 1920 design is untouched. */
+  --fs-sans: max(0.875rem, 11px);   /* labels, nav, footer — 14px in the design */
+  --fs-serif: max(1.05rem, 12.5px); /* captions, headings, body copy — 16.8px */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg);
+  /* Fluid scaling: 1rem tracks the 1920px reference design down to 1024px,
+     then holds steady so the mobile layout below gets normal-sized type. */
+  font-size: clamp(12px, calc(100vw / 120), 16px);
+}
+
+/* Home & about are a fixed 1920x1080 canvas with no scroll of their own —
+   scale by whichever of width/height is tighter so the whole canvas
+   (footer included) always fits inside one viewport, no scrolling needed.
+   No lower floor here (unlike the default clamp above): a short viewport
+   must be able to shrink past 12px to still avoid a scrollbar.
+   Scoped to min-width so it never fights the mobile font-size reset below
+   (a bare `html` selector there would lose to this on specificity alone). */
+@media (min-width: 901px) {
+  html.canvas-page {
+    font-size: min(calc(100vw / 120), calc(100vh / 67.5), 16px);
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Keyboard users: first Tab reveals a link past the header to the content. */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.6rem 0.9rem;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: 0.875rem;
+  font-weight: 300;
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+/* ===== Shared page shell ===== */
+
+.page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* On the canvas pages, center the (now viewport-fitted) canvas so any
+   leftover space from an off-aspect-ratio viewport (width-bound, e.g. a
+   1920x1200 window) collects below the canvas instead of pushing it down —
+   pinning the top edge is what keeps the header aligned with the project
+   pages, whose fixed header always sits at true top:0. */
+html.canvas-page .page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@media (max-width: 900px) {
+  html.canvas-page .page {
+    display: block;
+  }
+}
+
+/* Desktop canvas: absolutely-positioned replica of the 1920x1080 design,
+   scaled fluidly via the root font-size (rem) trick above. */
+.canvas {
+  position: relative;
+  width: 100%;
+  max-width: 120rem; /* 1920px at 16px root */
+  margin: 0 auto;
+  height: 67.5rem; /* 1080px */
+}
+
+/* ===== Header ===== */
+
+.site-header {
+  position: absolute;
+  top: 1.68rem; /* 27px */
+  left: 1.5rem; /* 24px */
+  right: 1.5rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.site-nav {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: var(--fs-sans);
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  white-space: nowrap;
+}
+
+.menu-link {
+  font-size: var(--fs-sans);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ===== Footer ===== */
+
+.site-footer {
+  position: absolute;
+  bottom: 1.05rem; /* ~16.5px from 1063.5 baseline */
+  right: 1.5rem;
+  display: flex;
+  gap: 1.9rem; /* ~30px */
+  font-size: var(--fs-sans);
+  font-weight: 300;
+}
+
+/* ===== Home: project grid ===== */
+
+.project-grid {
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 26.69rem; /* aligns image bottoms at y=653px -> (1080-653)/16 */
+  height: 20rem; /* tallest image, 320px */
+  display: flex;
+  align-items: flex-end;
+}
+
+.project {
+  display: block;
+  margin: 0;
+}
+
+.project-link {
+  display: block; /* a real box, so keyboard focus is visible (display:contents has none) */
+  width: 100%;
+  height: 100%;
+}
+
+.project-link:hover img {
+  opacity: 0.92;
+}
+
+.project-link:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 0.4rem;
+}
+
+.project img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s ease;
+}
+
+.project figcaption {
+  margin-top: 1.25rem; /* ~20px, gap between image bottom (653) and label (674.8) */
+  line-height: 1.35;
+}
+
+.project .cat {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--fs-sans);
+  letter-spacing: 0.01em;
+}
+
+.project .title {
+  display: block;
+  font-family: var(--font-serif);
+  font-style: normal;
+  font-size: var(--fs-serif); /* serif runs a size above the sans labels to read at the same weight */
+}
+
+/* Per-thumbnail width, height (natural aspect of each image) and gap to the
+   next one are set inline on each figure in index.html (widths/gaps measured
+   from the 1920x1080 homepage design). Figure height is the image's alone so
+   the captions hang below and all image bottoms line up. */
+
+/* ===== About page ===== */
+
+.about-portrait {
+  position: absolute;
+  left: 44.8%; /* 860/1920 */
+  top: 21.8rem; /* keeps the portrait vertically centred (~541px) at its natural height */
+  width: 17.81rem; /* 285px */
+  height: 24.03rem; /* natural aspect of the new photo (1000x1349) */
+}
+
+.about-header {
+  position: absolute;
+  left: 2.75rem; /* 44px */
+  top: 48.36rem; /* 773.8px */
+  white-space: nowrap; /* the label + subtitle stay one line each, even where the text-size floor makes them wider than the scaled column */
+}
+
+.about-header .label {
+  display: block;
+  font-size: var(--fs-sans);
+  font-weight: 300;
+  margin-bottom: 0.35rem;
+}
+
+.about-header .subtitle {
+  display: block;
+  margin: 0; /* it's the page's <h1> */
+  font-family: var(--font-serif);
+  font-size: var(--fs-serif);
+  font-weight: 400;
+}
+
+.about-body {
+  position: absolute;
+  left: 2.75rem;
+  top: 54.5rem; /* 872px — below the header with room to spare, leaving ~55px clear above the canvas's bottom edge */
+  width: 53rem; /* ~848px measure for the 1.05rem serif text */
+  font-family: var(--font-serif);
+  font-size: var(--fs-serif);
+  line-height: 1.5;
+}
+
+.about-body p {
+  margin: 0;
+  text-wrap: pretty; /* avoid a one-word last line where supported */
+}
+
+/* ===== 404 page ===== */
+
+.not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 100vh;
+  padding: 0 2.75rem;
+}
+
+.not-found-label {
+  font-size: var(--fs-sans);
+  font-weight: 300;
+}
+
+.not-found-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--fs-serif);
+  font-weight: 400;
+}
+
+.not-found-link {
+  margin-top: 1.5rem;
+  font-size: var(--fs-sans);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 1px;
+}
+
+/* ===== Project / case-study pages =====
+   Unlike home & about, these scroll well past 1080px, so content uses
+   normal document flow (margin-top per block) instead of absolute
+   positioning against a fixed canvas. */
+
+.project-page .site-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 120rem; /* matches .canvas's 1920px cap so the logo/menu-link line up with home & about */
+  transform: translateX(-50%);
+  padding: 1.68rem 1.5rem 0;
+  background: var(--color-bg);
+  z-index: 20;
+}
+
+/* The rest of a project page is sized from width alone (html's default
+   font-size clamp above) — appropriate for a page that's meant to scroll,
+   so the gallery doesn't arbitrarily shrink just because the window is
+   short. But that means it diverges from home/about's width-AND-height
+   formula (html.canvas-page) whenever the browser's content area isn't
+   exactly the 1920x1080 ratio — which in practice is almost always, since
+   browser chrome eats vertical space. Left alone, the header and footer
+   would render at a different scale (and shift position/width) between
+   page types. So they get their own scale here, computed the identical
+   width-and-height way canvas-page pages use, independent of the rest of
+   this page's (width-only) sizing. */
+@media (min-width: 901px) {
+  .project-page {
+    --chrome-scale: min(calc(100vw / 120), calc(100vh / 67.5), 16px);
+  }
+
+  .project-page .site-header {
+    max-width: calc(var(--chrome-scale) * 120);
+    padding: calc(var(--chrome-scale) * 1.68) calc(var(--chrome-scale) * 1.5) 0;
+  }
+
+  .project-page .logo,
+  .project-page .menu-link {
+    font-size: max(calc(var(--chrome-scale) * 0.875), 11px);
+  }
+
+  .project-page .site-footer {
+    /* stays position: static (in normal flow, after the gallery) — only
+       its scale needs to match home/about, not their absolute placement */
+    max-width: calc(var(--chrome-scale) * 120);
+    gap: calc(var(--chrome-scale) * 1.9);
+    padding: calc(var(--chrome-scale) * 4) calc(var(--chrome-scale) * 1.5) calc(var(--chrome-scale) * 2.5);
+    font-size: max(calc(var(--chrome-scale) * 0.875), 11px);
+  }
+
+  /* .proj-credit/.proj-bio/.proj-row size themselves from the page's own
+     width-only font-size (so the gallery never shrinks just because the
+     window is short) — but without this, their left edge would stay
+     anchored to the true viewport edge while the header (above) shifts
+     to match home/about's inset, visibly detaching the two. Wrapping the
+     whole body in the same chrome-scale box the header uses re-anchors
+     everything to one shared edge, and since every piece of content here
+     is comfortably narrower than this box even at its most-shrunk, none
+     of it has to give up its own (width-only) sizing to fit. */
+  .project-page .proj-main {
+    max-width: calc(var(--chrome-scale) * 120);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Exact match with .about-header/.about-body's left edge (same 2.75rem
+     multiple, just computed off chrome-scale instead of the page's own
+     width-only rem) — width/font-size/line-height stay on the page's own
+     rem so the paragraph column doesn't narrow on a short window. */
+  .project-page .proj-credit,
+  .project-page .proj-bio {
+    margin-left: calc(var(--chrome-scale) * 2.75);
+    margin-right: calc(var(--chrome-scale) * 2.75);
+  }
+}
+
+.proj-hero {
+  display: block;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Category label (sans) + heading line (serif), same pairing as the About
+   page's "apie mane" / subtitle and the homepage captions. */
+.proj-credit {
+  margin-left: 2.75rem;
+  margin-right: 2.75rem;
+}
+
+.proj-cat {
+  display: block;
+  font-size: var(--fs-sans);
+  font-weight: 300;
+  margin-bottom: 0.35rem;
+}
+
+.proj-heading {
+  display: block;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--fs-serif);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.proj-bio {
+  margin: 0 2.75rem 0 2.75rem;
+  max-width: 46rem;
+  font-family: var(--font-serif);
+  font-size: var(--fs-serif);
+  line-height: 1.5;
+}
+
+.proj-bio p {
+  margin: 0;
+}
+
+.proj-bio p + p {
+  margin-top: 1.5em; /* one blank line between paragraphs */
+}
+
+.proj-row {
+  max-width: 57.5rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.proj-row--full img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.proj-row--half {
+  display: flex;
+  gap: 0.625rem;
+}
+
+.proj-row--half img {
+  display: block;
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  height: auto;
+}
+
+.proj-row--centered img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Project 1's three marks: one wide image on desktop, the same three stacked
+   individually on mobile (a single strip would be too small to read there). */
+.proj-row--marks .marks-split {
+  display: none;
+}
+
+.project-page .site-footer {
+  position: static;
+  justify-content: flex-end;
+  max-width: 120rem; /* matches .canvas's 1920px cap so it lines up with home & about */
+  padding: 4rem 1.5rem 2.5rem;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .project-page .site-header {
+    padding: 1.5rem 1.25rem 0;
+  }
+
+  .proj-hero {
+    width: 60vw !important;
+    max-width: 20rem;
+  }
+
+  .proj-credit,
+  .proj-bio {
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
+  }
+
+  .proj-bio {
+    max-width: none;
+    font-size: 1.05rem; /* matches desktop */
+    line-height: 1.5;
+  }
+
+  .proj-row {
+    max-width: none;
+    padding: 0 1.25rem;
+  }
+
+  .proj-row--half {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .proj-row--centered {
+    width: auto !important;
+    max-width: 20rem;
+  }
+
+  .proj-row--marks .marks-wide {
+    display: none;
+  }
+
+  .proj-row--marks .marks-split {
+    display: block;
+    width: 60%;
+    margin: 0 auto 1.5rem;
+  }
+
+  .project-page .site-footer {
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 3rem 1.25rem 2.5rem;
+    font-size: 0.875rem; /* 14px, matches desktop */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader,
+  .home-content,
+  .project img {
+    transition: none;
+  }
+}
+
+/* ===== Preloader (index.html only) ===== */
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s ease;
+}
+
+.preloader img {
+  width: 17.9rem; /* 286px */
+  height: 24.15rem; /* natural aspect of the new photo (1000x1349) */
+  object-fit: cover;
+}
+
+.preloader.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.home-content {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.home-content.is-visible {
+  opacity: 1;
+}
+
+/* ===================================================================
+   Mobile / tablet layout — below this width the absolute desktop
+   canvas is replaced with a simple, comfortably-sized stacked flow.
+   =================================================================== */
+
+.mobile-only { display: none; }
+
+@media (max-width: 900px) {
+  html {
+    font-size: 16px;
+  }
+
+  .canvas { display: none; }
+
+  .mobile-only { display: block; }
+
+  .page {
+    padding: 0 1.25rem 3rem;
+  }
+
+  .site-header.mobile-only {
+    position: sticky;
+    top: 0;
+    background: var(--color-bg);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 1rem 0;
+    z-index: 5;
+  }
+
+  /* comfortably tappable header/footer links on phones (>= 24px tall) */
+  .site-nav a,
+  .site-footer a {
+    display: inline-block;
+    padding: 0.55rem 0.35rem;
+  }
+
+  .site-nav .logo { margin-left: -0.35rem; }
+  .site-nav .menu-link { margin-right: -0.35rem; }
+
+  .logo { font-size: 0.9rem; }
+  .menu-link { font-size: 0.875rem; } /* 14px, matches desktop */
+
+  .project-grid.mobile-only {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .project {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .project img {
+    width: 100%;
+    height: auto; /* aspect ratio comes from the img's width/height attributes */
+  }
+
+  .project figcaption {
+    margin-top: 0.75rem;
+  }
+
+  .project .cat {
+    font-size: 0.875rem; /* 14px, matches desktop */
+  }
+
+  .project .title {
+    font-size: 1.05rem; /* matches desktop */
+  }
+
+  .about-portrait.mobile-only {
+    position: static;
+    width: 100%;
+    max-width: 22rem;
+    height: auto;
+    aspect-ratio: 1000 / 1349;
+    margin: 1.5rem 0;
+  }
+
+  .about-header.mobile-only,
+  .about-body.mobile-only {
+    position: static;
+    width: 100%;
+    margin-bottom: 2.5rem;
+  }
+
+  .about-header.mobile-only {
+    white-space: normal; /* let long lines wrap on narrow phones */
+  }
+
+  .about-header .label { font-size: 0.875rem; } /* 14px, matches desktop */
+
+  .about-header .subtitle { font-size: 1.05rem; } /* matches desktop */
+
+  .about-body {
+    font-size: 1.05rem; /* matches desktop */
+    line-height: 1.5;
+  }
+
+  .site-footer.mobile-only {
+    display: flex; /* the generic .mobile-only{display:block} fallback ties in
+      specificity with the base .site-footer{display:flex} rule and wins on
+      source order, silently making justify-content a no-op without this */
+    position: static;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+    font-size: 0.875rem; /* 14px, matches desktop */
+  }
+
+  .preloader img {
+    width: 60vw;
+    height: auto;
+    aspect-ratio: 1000 / 1349;
+  }
+}
