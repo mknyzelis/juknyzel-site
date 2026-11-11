@@ -472,6 +472,15 @@ html.canvas-page .page {
   margin-top: 1.5em; /* one blank line between paragraphs */
 }
 
+/* Credit line under the text (sans, same voice as the category label) */
+.proj-bio .proj-byline {
+  margin-top: 2rem;
+  font-family: var(--font-sans);
+  font-size: var(--fs-sans);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
 .proj-row {
   max-width: 57.5rem;
   margin-left: auto;
